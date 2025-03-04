@@ -3,18 +3,19 @@ provider "aws" {
 }
 
 module "lambda" {
-  source = "./modules/lambda"
-  lambda_function_name = var.lambda_function_name
+  source              = "./modules/lambda"
+  lambda_function_name = "HelloWorldFunction"
 }
 
 module "cognito" {
-  source = "./modules/cognito"
-  user_pool_name       = var.user_pool_name
-  app_client_name      = var.app_client_name
+  source          = "./modules/cognito"
+  user_pool_name  = "HelloWorldUserPool"
+  app_client_name = "HelloWorldAppClient"
 }
 
 module "api_gateway" {
-  source               = "./modules/api_gateway"
-  lambda_function_name = module.lambda.lambda_function_name
-  authorizer_name      = module.cognito.authorizer_name
+  source             = "./modules/api_gateway"
+  lambda_function_name = module.lambda.lambda_function_name  # Pass Lambda function name to API Gateway
+  authorizer_name      = module.cognito.authorizer_name      # Pass authorizer name to API Gateway
 }
+
