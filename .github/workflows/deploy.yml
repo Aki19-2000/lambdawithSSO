@@ -1,7 +1,7 @@
 name: Deploy to AWS
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Manually trigger the workflow from GitHub UI
 
 jobs:
   deploy:
@@ -20,8 +20,17 @@ jobs:
           role-to-assume: arn:aws:iam::510278866235:role/OIDC2
           aws-region: us-east-1  # Set your AWS region
 
-      - name: Run Terraform
+      - name: Initialize Terraform
         run: |
-          terraform init
-          terraform plan
-          terraform apply -auto-approve
+          cd terraform  # Change to your Terraform directory
+          terraform init  # Initialize Terraform configuration
+
+      - name: Plan Terraform Deployment
+        run: |
+          cd terraform  # Change to your Terraform directory
+          terraform plan  # Plan the deployment
+
+      - name: Apply Terraform Deployment
+        run: |
+          cd terraform  # Change to your Terraform directory
+          terraform apply -auto-approve  # Apply the deployment without approval
