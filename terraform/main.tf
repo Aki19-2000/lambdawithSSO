@@ -6,7 +6,7 @@ provider "aws" {
 
 module "lambda" {
   source              = "./modules/lambda"
-  lambda_function_name = "HelloWorldFunction"
+  lambda_function_name = "HelloWorldFunction"  # Pass Lambda function name to the module
 }
 
 module "cognito" {
