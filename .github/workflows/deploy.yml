@@ -24,18 +24,19 @@ jobs:
         run: |
           curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo tee /etc/apt/trusted.gpg.d/hashicorp.asc
           sudo apt-get update -y
-          sudo apt-get install terraform -y
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository "deb https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          sudo apt-get update -y
+          sudo apt-get install -y terraform
 
       - name: Terraform Init
         run: terraform init
         working-directory: terraform  # Ensure Terraform runs from the correct directory
 
-      # Run Terraform plan
       - name: Terraform Plan
         run: terraform plan 
         working-directory: terraform  # Ensure Terraform runs from the correct directory
 
-      # Apply Terraform to create resources (e.g., ECR repositories)
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: terraform  # Ensure Terraform runs from the correct directory
