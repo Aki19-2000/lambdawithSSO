@@ -1,0 +1,27 @@
+name: Deploy to AWS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write  # Allow GitHub to generate an OIDC token
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::<your-account-id>:role/GitHubActionsOIDCRole  # Role ARN
+          aws-region: us-east-1  # Set your AWS region
+
+      - name: Run Terraform
+        run: |
+          terraform init
+          terraform plan
+          terraform apply -auto-approve
