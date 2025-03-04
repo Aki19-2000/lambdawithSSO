@@ -1,3 +1,5 @@
+# main.tf (Root Module)
+
 provider "aws" {
   region = var.aws_region
 }
@@ -18,4 +20,3 @@ module "api_gateway" {
   lambda_function_name = module.lambda.lambda_function_name  # Pass Lambda function name to API Gateway
   authorizer_name      = module.cognito.authorizer_name      # Pass authorizer name to API Gateway
 }
-
