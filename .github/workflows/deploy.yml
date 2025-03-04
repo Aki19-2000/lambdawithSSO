@@ -20,17 +20,17 @@ jobs:
           role-to-assume: arn:aws:iam::510278866235:role/OIDC2
           aws-region: us-east-1  # Set your AWS region
 
-      - name: Initialize Terraform
-        run: |
-          cd terraform  # Change to your Terraform directory
-          terraform init  # Initialize Terraform configuration
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform  # Ensure Terraform runs from the correct directory
 
-      - name: Plan Terraform Deployment
-        run: |
-          cd terraform  # Change to your Terraform directory
-          terraform plan  # Plan the deployment
+      # Run Terraform plan
+      - name: Terraform Plan
+        run: terraform plan 
+        working-directory: terraform  # Ensure Terraform runs from the correct directory
 
-      - name: Apply Terraform Deployment
-        run: |
-          cd terraform  # Change to your Terraform directory
-          terraform apply -auto-approve  # Apply the deployment without approval
+      # Apply Terraform to create resources (e.g., ECR repositories)
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: terraform  # Ensure Terraform runs from the correct directory
+
