@@ -17,7 +17,7 @@ jobs:
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::<your-account-id>:role/GitHubActionsOIDCRole  # Role ARN
+          role-to-assume: arn:aws:iam::510278866235:role/OIDC2
           aws-region: us-east-1  # Set your AWS region
 
       - name: Run Terraform
