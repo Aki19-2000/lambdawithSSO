@@ -57,15 +57,15 @@ resource "aws_api_gateway_method" "get" {
   ]
 }
 
-# Lambda integration to API Gateway
 resource "aws_api_gateway_integration" "lambda" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
   resource_id             = aws_api_gateway_resource.root.id
   http_method             = aws_api_gateway_method.get.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${var.lambda_function_name}/invocations"
+  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${module.lambda.lambda_function_arn}/invocations"
 }
+
 
 # API Gateway Deployment
 resource "aws_api_gateway_deployment" "api_deployment" {
