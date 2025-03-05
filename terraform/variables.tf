@@ -1,8 +1,4 @@
-
-variable "aws_region" {
-  description = "AWS region"
-  default     = "us-west-2"
-}
+# variables.tf (Root Module)
 
 variable "lambda_function_name" {
   description = "Name of the Lambda function"
