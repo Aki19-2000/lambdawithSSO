@@ -36,9 +36,9 @@ resource "aws_api_gateway_resource" "root" {
 resource "aws_api_gateway_authorizer" "cognito_authorizer" {
   name                 = var.authorizer_name
   rest_api_id          = aws_api_gateway_rest_api.api.id
-  type                 = "COGNITO_USER_POOLS"  # Corrected the argument name
+  type                 = "COGNITO_USER_POOLS"
   identity_source      = "method.request.header.Authorization"
-  provider_arns        = "arn:aws:cognito-idp:us-east-1:510278866235:userpool/us-east-1_ma5Vf7L4Z"
+  provider_arns        = [var.user_pool_arn]  # Wrap the ARN in a list
   authorizer_result_ttl_in_seconds = 300
 }
 
