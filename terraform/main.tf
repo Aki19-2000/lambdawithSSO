@@ -2,23 +2,24 @@ provider "aws" {
   region = var.aws_region  # Use the region variable
 }
 
-module "lambda" {
-  source               = "./modules/lambda"
-  lambda_function_name  = "myLambdaFunction"
-  iam_role_arn          = module.iam.lambda_role_arn
-  image_uri             = "510278866235.dkr.ecr.us-east-1.amazonaws.com/helloworld:latest"
-  environment           = "dev"
-  api_stage             = "prod"
-  account_id            = "510278866235"
-  region                = var.region  # Pass region to the lambda module
+module "iam" {
+  source               = "./modules/iam"
+  aws_region           = var.region          # Pass region to IAM module
+  account_id           = var.account_id      # Pass account ID to IAM module
+  lambda_function_name = var.lambda_function_name  # Pass Lambda function name
 }
 
-module "iam" {
-  source              = "./modules/iam"
-  aws_region          = var.aws_region
-  account_id          = var.account_id
-  lambda_function_name = "myLambdaFunction"
+module "lambda" {
+  source               = "./modules/lambda"
+  region               = var.region          # Pass region to Lambda module
+  lambda_function_name = var.lambda_function_name  # Pass Lambda function name
+  iam_role_arn         = module.iam.lambda_role_arn   # Pass IAM role ARN
+  image_uri            = "510278866235.dkr.ecr.us-east-1.amazonaws.com/helloworld:latest"  # Example URI
+  environment          = "dev"                # Lambda environment
+  api_stage            = "prod"               # API Gateway stage
+  account_id           = var.account_id       # Pass AWS account ID to Lambda module
 }
+
 
 
 module "api_gateway" {
