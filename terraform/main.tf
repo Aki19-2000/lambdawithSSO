@@ -25,12 +25,6 @@ module "api_gateway" {
   user_pool_arn        = "arn:aws:cognito-idp:us-east-1:510278866235:userpool/us-east-1_ma5Vf7L4Z"  # Reference the user pool ARN manually
 }
 
-variable "aws_region" {
-  description = "The AWS region"
-  type        = string
-  default     = "us-east-1"  # Set your default region here
-}
-
 variable "authorizer_name" {
   description = "The name of the Cognito authorizer"
   type        = string
