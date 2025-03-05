@@ -3,8 +3,14 @@ provider "aws" {
 }
 
 module "lambda" {
-  source              = "./modules/lambda"
-  lambda_function_name = "HelloWorldFunction"
+  source               = "./modules/lambda"
+  lambda_function_name  = "myLambdaFunction"
+  iam_role_arn          = module.iam.lambda_role_arn
+  image_uri             = "510278866235.dkr.ecr.us-east-1.amazonaws.com/helloworld:latest"
+  environment           = "dev"
+  api_stage             = "prod"
+  account_id            = "510278866235"
+  region                = var.region  # Pass region to the lambda module
 }
 
 module "api_gateway" {
