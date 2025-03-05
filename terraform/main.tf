@@ -12,10 +12,14 @@ module "lambda" {
   account_id            = "510278866235"
   region                = var.region  # Pass region to the lambda module
 }
+
 module "iam" {
-  source = "./modules/iam"
+  source              = "./modules/iam"
+  aws_region          = var.aws_region
+  account_id          = var.account_id
   lambda_function_name = "myLambdaFunction"
 }
+
 
 module "api_gateway" {
   source               = "./modules/api_gateway"
