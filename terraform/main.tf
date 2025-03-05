@@ -5,7 +5,7 @@ provider "aws" {
 module "iam" {
   source               = "./modules/iam"
   aws_region           = var.region          # Pass region to IAM module
-  account_id           = var.account_id      # Pass account ID to IAM module
+  account_id           = "510278866235"      # Pass account ID to IAM module
   lambda_function_name = var.lambda_function_name  # Pass Lambda function name
 }
 
@@ -17,7 +17,7 @@ module "lambda" {
   image_uri            = "510278866235.dkr.ecr.us-east-1.amazonaws.com/helloworld:latest"  # Example URI
   environment          = "dev"                # Lambda environment
   api_stage            = "prod"               # API Gateway stage
-  account_id           = var.account_id       # Pass AWS account ID to Lambda module
+  account_id           = "510278866235"      # Pass AWS account ID to Lambda module
 }
 
 
