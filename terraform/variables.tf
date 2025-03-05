@@ -7,7 +7,6 @@ variable "aws_region" {
 variable "account_id" {
   description = "The AWS account ID"
   type        = string
-  default     = "510278866235"
 }
 
 variable "lambda_function_name" {
@@ -15,7 +14,8 @@ variable "lambda_function_name" {
   default     = "HelloWorldFunction"
 }
 
-variable "app_client_name" {
-  description = "Name of the Cognito App Client"
-  default     = "HelloWorldAppClient"
+variable "authorizer_name" {
+  description = "The name of the Cognito authorizer"
+  type        = string
+  default     = "MyCognitoAuthorizer"
 }
