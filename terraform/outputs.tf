@@ -3,10 +3,5 @@ output "lambda_function_name" {
 }
 
 output "api_gateway_url" {
-  value = module.api_gateway.api_gateway_url
+  value = "https://${module.api_gateway.rest_api_id}.execute-api.${var.aws_region}.amazonaws.com/prod"
 }
-
-output "cognito_user_pool_id" {
-  value = module.cognito.user_pool_id
-}
-
