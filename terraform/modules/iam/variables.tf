@@ -1,16 +1,14 @@
-variable "lambda_function_name" {
-  description = "Name of the Lambda function"
+variable "aws_region" {
+  description = "The AWS region"
   type        = string
 }
 
-variable "region" {
-  description = "AWS Region"
-  type        = string
-  default     = "us-east-1"
-}
 variable "account_id" {
   description = "The AWS account ID"
   type        = string
 }
 
-
+variable "lambda_function_name" {
+  description = "The name of the Lambda function"
+  type        = string
+}
