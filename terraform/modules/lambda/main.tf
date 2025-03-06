@@ -1,14 +1,16 @@
-resource "aws_lambda_function" "this" {
-  function_name = var.lambda_function_name
-  role          = var.iam_role_arn
+resource "aws_lambda_function" "hello_world_function" {
+  function_name = "hello-world-function"
+  role          = var.lambda_role_arn
+  image_uri     = var.image_name
   package_type  = "Image"
-  image_uri     = var.image_uri
 
   environment {
     variables = {
-      ENV = var.environment
+      ENV = "prd"
     }
   }
+
+ 
 
   # Enabling X-Ray tracing
   tracing_config {
