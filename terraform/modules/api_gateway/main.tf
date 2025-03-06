@@ -1,87 +1,65 @@
-# modules/api_gateway/main.tf
+resource "aws_apigatewayv2_api" "api_gateway" {
+  name          = "hello-world-api"
+  protocol_type = "HTTP"
 
-variable "authorizer_name" {
-  description = "The name of the Cognito authorizer"
-  type        = string
-}
-variable "lambda_function_name" {
-  description = "The name of the Lambda function"
-  type        = string
-}
-
-variable "user_pool_arn" {
-  description = "The ARN of the Cognito User Pool"
-  type        = string
+  cors_configuration {
+    allow_origins = ["*"]
+    allow_methods = ["GET", "POST", "PUT", "DELETE"]
+    allow_headers = ["Content-Type", "Authorization"]
+    max_age       = 300
+  }
 }
 
-variable "aws_region" {
-  description = "The AWS region for resources"
-  type        = string
+# Creates a JWT authorizer for API Gateway:
+# - Extracts the JWT token from the Authorization header.
+# - Uses the Cognito User Pool’s endpoint as the trusted identity provider.
+# - Restricts tokens to be issued only for this specific User Pool Client.
+
+resource "aws_apigatewayv2_authorizer" "jwt_authorizer" {
+  api_id          = aws_apigatewayv2_api.api_gateway.id
+  authorizer_type = "JWT"
+  identity_sources = ["$request.header.Authorization"]
+
+  jwt_configuration {
+    issuer   = "https://cognito-idp.us-east-1.amazonaws.com/${var.user_pool_id}"
+    audience = [var.user_pool_client_id]
+  }
+
+  name = "jwt-authorizer"
 }
 
-
-# Ensure the Cognito User Pool is defined in the root module and passed correctly.
-resource "aws_api_gateway_rest_api" "api" {
-  name        = "hello-world-api"
-  description = "API Gateway for Hello World Lambda"
+# Creates an API stage
+resource "aws_apigatewayv2_stage" "api_stage" {
+  api_id = aws_apigatewayv2_api.api_gateway.id
+  name   = "prod"
+  auto_deploy = true
 }
 
-# Ensure that the root resource is created before method and integration
-resource "aws_api_gateway_resource" "root" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
-  path_part   = "hello"
+# Creates an integration between API Gateway and Lambda
+resource "aws_apigatewayv2_integration" "lambda_integration" {
+  api_id = aws_apigatewayv2_api.api_gateway.id
+
+  integration_type   = "AWS_PROXY"
+  integration_method = "POST"
+  integration_uri    = aws_lambda_function.hello_world_function.invoke_arn
 }
 
-resource "aws_api_gateway_authorizer" "cognito_authorizer" {
-  name                 = var.authorizer_name
-  rest_api_id          = aws_api_gateway_rest_api.api.id
-  type                 = "COGNITO_USER_POOLS"
-  identity_source      = "method.request.header.Authorization"
-  provider_arns        = [var.user_pool_arn]  # Wrap the ARN in a list
-  authorizer_result_ttl_in_seconds = 300
+# Creates a route for the API Gateway
+resource "aws_apigatewayv2_route" "api_route" {
+  api_id = aws_apigatewayv2_api.api_gateway.id
+  route_key = "ANY /{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  authorizer_id = aws_apigatewayv2_authorizer.jwt_authorizer.id
 }
 
+# Grants API Gateway permission to invoke the Lambda function
+resource "aws_lambda_permission" "api_gateway_permission" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.hello_world_function.function_name
+  principal     = "apigateway.amazonaws.com"
 
-
-# Create the API Gateway method (GET)
-resource "aws_api_gateway_method" "get" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.root.id
-  http_method   = "GET"
-  authorization = "COGNITO_USER_POOLS"
-  authorizer_id = aws_api_gateway_authorizer.cognito_authorizer.id  # Pass the correct authorizer_id here
-  
-  depends_on = [
-    aws_api_gateway_authorizer.cognito_authorizer
-  ]
+  source_arn = "${aws_apigatewayv2_api.api_gateway.execution_arn}/*/*"
 }
 
-resource "aws_api_gateway_integration" "lambda" {
-  rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.root.id
-  http_method             = aws_api_gateway_method.get.http_method
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${module.lambda.lambda_function_arn}/invocations"
-}
-
-
-# API Gateway Deployment
-resource "aws_api_gateway_deployment" "api_deployment" {
-  depends_on = [
-    aws_api_gateway_integration.lambda
-  ]
-  rest_api_id = aws_api_gateway_rest_api.api.id
-}
-
-# Define API Gateway Stage (prod)
-resource "aws_api_gateway_stage" "api_stage" {
-  stage_name    = "prod"
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  deployment_id = aws_api_gateway_deployment.api_deployment.id
-}
-
-output "rest_api_id" {
-  value = aws_api_gateway_rest_api.api.id  # Output the rest_api_id for use by other modules
-}
+ 
