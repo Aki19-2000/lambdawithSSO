@@ -20,7 +20,6 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"  # Allow basic Lambda execution
 }
 
-# New policy attachment to allow API Gateway to invoke the Lambda function
 resource "aws_iam_role_policy" "api_gateway_lambda_invoke" {
   name   = "ApiGatewayInvokeLambdaPolicy"
   role   = aws_iam_role.lambda_exec.id
@@ -36,7 +35,6 @@ resource "aws_iam_role_policy" "api_gateway_lambda_invoke" {
   })
 }
 
-# Allow API Gateway to manage the Lambda invocation role (attach AWSLambdaRole policy)
 resource "aws_iam_role_policy_attachment" "api_gateway_lambda_execution" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"  # Allow API Gateway to invoke Lambda
