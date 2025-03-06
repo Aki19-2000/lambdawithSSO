@@ -13,7 +13,7 @@ module "lambda_api" {
   source = "./modules/lambda"
  
   lambda_role_arn     = module.iam_role.lambda_role_arn
-  image_name          = var.image_name
+  image_name          = "510278866235.dkr.ecr.us-east-1.amazonaws.com/helloworld:latest"
   user_pool_id        = module.cognito.user_pool_id
   user_pool_client_id = module.cognito.user_pool_client_id
 }
