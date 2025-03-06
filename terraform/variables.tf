@@ -7,6 +7,7 @@ variable "aws_region" {
 variable "account_id" {
   description = "The AWS account ID"
   type        = string
+  default     = "510278866235"
 }
 
 variable "lambda_function_name" {
