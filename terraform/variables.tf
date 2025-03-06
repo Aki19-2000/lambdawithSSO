@@ -1,22 +1,19 @@
 variable "aws_region" {
   description = "The AWS region"
   type        = string
-  default     = "us-east-1"  # Default region, change it if needed
+}
+
+variable "lambda_function_name" {
+  description = "The name of the Lambda function"
+  type        = string
+}
+
+variable "image_uri" {
+  description = "URI of the Docker image for Lambda function"
+  type        = string
 }
 
 variable "account_id" {
   description = "The AWS account ID"
   type        = string
-  default     = "510278866235"
-}
-
-variable "lambda_function_name" {
-  description = "Name of the Lambda function"
-  default     = "HelloWorldFunction"
-}
-
-variable "authorizer_name" {
-  description = "The name of the Cognito authorizer"
-  type        = string
-  default     = "MyCognitoAuthorizer"
 }
