@@ -10,13 +10,11 @@ resource "aws_lambda_function" "hello_world_function" {
     }
   }
 
- 
-
-  # Enabling X-Ray tracing
   tracing_config {
     mode = "Active"  # This enables X-Ray tracing for the Lambda function
   }
 }
+
 resource "aws_apigatewayv2_api" "api_gateway" {
   name          = "hello-world-api"
   protocol_type = "HTTP"
@@ -28,11 +26,6 @@ resource "aws_apigatewayv2_api" "api_gateway" {
     max_age       = 300
   }
 }
-
-# Creates a JWT authorizer for API Gateway:
-# - Extracts the JWT token from the Authorization header.
-# - Uses the Cognito User Pool’s endpoint as the trusted identity provider.
-# - Restricts tokens to be issued only for this specific User Pool Client.
 
 resource "aws_apigatewayv2_authorizer" "jwt_authorizer" {
   api_id          = aws_apigatewayv2_api.api_gateway.id
@@ -47,14 +40,12 @@ resource "aws_apigatewayv2_authorizer" "jwt_authorizer" {
   name = "jwt-authorizer"
 }
 
-# Creates an API stage
 resource "aws_apigatewayv2_stage" "api_stage" {
   api_id = aws_apigatewayv2_api.api_gateway.id
   name   = "prod"
   auto_deploy = true
 }
 
-# Creates an integration between API Gateway and Lambda
 resource "aws_apigatewayv2_integration" "lambda_integration" {
   api_id = aws_apigatewayv2_api.api_gateway.id
 
@@ -63,7 +54,6 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
   integration_uri    = aws_lambda_function.hello_world_function.invoke_arn
 }
 
-# Creates a route for the API Gateway
 resource "aws_apigatewayv2_route" "api_route" {
   api_id = aws_apigatewayv2_api.api_gateway.id
   route_key = "ANY /{proxy+}"
@@ -71,7 +61,6 @@ resource "aws_apigatewayv2_route" "api_route" {
   authorizer_id = aws_apigatewayv2_authorizer.jwt_authorizer.id
 }
 
-# Grants API Gateway permission to invoke the Lambda function
 resource "aws_lambda_permission" "api_gateway_permission" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
@@ -80,5 +69,3 @@ resource "aws_lambda_permission" "api_gateway_permission" {
 
   source_arn = "${aws_apigatewayv2_api.api_gateway.execution_arn}/*/*"
 }
-
- 
