@@ -1,12 +1,12 @@
 resource "aws_lambda_function" "hello_world_function" {
-  function_name = "hello-world-function"
-  role          = var.lambda_role_arn
+  function_name = var.lambda_function_name
+  role          = var.iam_role_arn
   image_uri     = var.image_uri
   package_type  = "Image"
 
   environment {
     variables = {
-      ENV = "prd"
+      ENV = var.environment
     }
   }
 
@@ -42,7 +42,7 @@ resource "aws_apigatewayv2_authorizer" "jwt_authorizer" {
 
 resource "aws_apigatewayv2_stage" "api_stage" {
   api_id = aws_apigatewayv2_api.api_gateway.id
-  name   = "prod"
+  name   = var.api_stage
   auto_deploy = true
 }
 
