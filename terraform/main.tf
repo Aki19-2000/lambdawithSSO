@@ -17,10 +17,3 @@ module "lambda_api" {
   user_pool_id        = module.cognito.user_pool_id
   user_pool_client_id = module.cognito.user_pool_client_id
 }
-
-module "api_gateway" {
-  source               = "./modules/api_gateway"
-  lambda_function_name = module.lambda.lambda_function_name  # Correctly reference the Lambda function name
-  authorizer_name      = var.authorizer_name                   # Pass authorizer name to API Gateway
-  aws_region           = var.aws_region                       # Pass region to API Gateway module
-}
