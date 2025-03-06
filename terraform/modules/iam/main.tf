@@ -30,7 +30,7 @@ resource "aws_iam_role_policy" "api_gateway_lambda_invoke" {
       {
         Action   = "lambda:InvokeFunction"
         Effect   = "Allow"
-        Resource = "arn:aws:lambda:${var.aws_region}:${var.account_id}:function:${var.lambda_function_name}"  # Reference the Lambda function
+        Resource = "*"
       }
     ]
   })
