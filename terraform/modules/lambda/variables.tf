@@ -32,3 +32,13 @@ variable "account_id" {
   description = "AWS Account ID"
   type        = string
 }
+
+variable "user_pool_id" {
+  description = "Cognito User Pool ID"
+  type        = string
+}
+
+variable "user_pool_client_id" {
+  description = "Cognito User Pool Client ID"
+  type        = string
+}
