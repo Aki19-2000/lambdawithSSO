@@ -26,8 +26,8 @@ module "lambda_api" {
   user_pool_client_id  = module.cognito.user_pool_client_id
 }
 
-output "lambda_function_name" {
-  value = module.lambda_api.lambda_function_name
+output "lambda_function_arn" {
+  value = module.lambda_api.lambda_function_arn
 }
 
 output "api_gateway_url" {
